@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background: #141414;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        button {
+            background: #00c896;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #sonuclar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .kart {
+            background: #252525;
+            padding: 20px;
+            border-radius: 12px;
+            width: 250px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 Benim API Sitem</h1>
+    <p>Canlı API verilerini getiriyoruz!</p>
+
+    <button onclick="verileriGetir()">Verileri Getir</button>
+<input
+    type="text"
+    id="arama"
+    placeholder="🔍 Kullanıcı ara..."
+    oninput="kullaniciAra()"
+    style="padding:15px; border-radius:10px; margin:15px;"
+>
+    <h2>📊 Canlı İstatistikler</h2>
+<div class="kart">
+    <h3>Toplam Kullanıcı</h3>
+    <h1 id="toplam">0</h1>
+</div>
+    <div id="sonuclar"></div>
+
+    <script>
+        async function verileriGetir() {function kullaniciAra() {
+    const aranan = document.getElementById("arama").value.toLowerCase();
+    const kartlar = document.querySelectorAll(".kart");
+
+    kartlar.forEach(kart => {
+        const isim = kart.querySelector("h3").textContent.toLowerCase();
+
+        kart.style.display = isim.includes(aranan) ? "block" : "none";
+    });
+}
+            const alan = document.getElementById("sonuclar");
+            alan.textContent = "Veriler yükleniyor...";
+
+            try {
+                const cevap = await fetch("/api");
+
+                if (!cevap.ok) {
+                    throw new Error("API hatası");
+                }
+
+                const kisiler = await cevap.json();
+                document.getElementById("toplam").textContent = kisiler.length;
+                alan.innerHTML = "";
+
+                kisiler.forEach(kisi => {
+                    const kart = document.createElement("div");
+                    kart.className = "kart";
+
+                    const isim = document.createElement("h3");
+                    isim.textContent = kisi.name;
+
+                    const email = document.createElement("p");
+                    email.textContent = kisi.email;
+
+                    const sehir = document.createElement("p");
+                    sehir.textContent = kisi.address.city;
+                    kart.style.cursor = "pointer";
+
+kart.onclick = function() {
+    document.getElementById("detay").style.display = "flex";
+
+    document.getElementById("detayBilgi").innerHTML = "";
+
+    const bilgiler = [
+        ["👤 İsim", kisi.name],
+        ["📧 E-posta", kisi.email],
+        ["📞 Telefon", kisi.phone],
+        ["🏢 Şirket", kisi.company.name],
+        ["🌐 Web sitesi", kisi.website]
+    ];
+
+    bilgiler.forEach(([baslik, deger]) => {
+        const satir = document.createElement("p");
+        satir.textContent = baslik + ": " + deger;
+        document.getElementById("detayBilgi").appendChild(satir);
+    });
+};{
+    document.getElementById("detay").style.display = "flex";
+
+const alan = document.getElementById("detayBilgi");
+
+alan.innerHTML = "";
+
+const bilgiler = [
+    ["👤 İsim", kisi.name],
+    ["📧 E-posta", kisi.email],
+    ["📞 Telefon", kisi.phone],
+    ["🏢 Şirket", kisi.company.name],
+    ["🌐 Web sitesi", kisi.website]
+];
+
+bilgiler.forEach(([baslik, deger]) => {
+    const satir = document.createElement("p");
+    satir.textContent = baslik + ": " + deger;
+    alan.appendChild(satir);
+});(
+        "👤 İsim: " + kisi.name +
+        "\n📧 E-posta: " + kisi.email +
+        "\n📞 Telefon: " + kisi.phone +
+        "\n🏢 Şirket: " + kisi.company.name +
+        "\n🌐 Web sitesi: " + kisi.website
+    );
+};
+                    kart.append(isim, email, sehir);
+                    alan.appendChild(kart);
+                });
+
+            } catch (hata) {
+                alan.textContent = "Veriler alınamadı!";
+                console.error(hata);
+            }
+        }
+        window.addEventListener("DOMContentLoaded", function() {
+    verileriGetir();
+});
+    </script>
+<div id="detay" class="modal">
+    <div class="modal-icerik">
+        <button onclick="document.getElementById('detay').style.display='none'">
+            ✖ Kapat
+        </button>
+        <h2>👤 Kullanıcı Detayları</h2>
+        <div id="detayBilgi"></div>
+    </div>
+</div>
+</body>
+</html>
