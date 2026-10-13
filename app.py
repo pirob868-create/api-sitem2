@@ -45,7 +45,24 @@ def api_verisi():
     except requests.RequestException:
         return jsonify({"hata": "API baglantisi basarisiz"}), 502
 
-@app.route("/kaydet")
+
+@app.route("/api")
+def api_verisi():
+    try:
+        api_url = "https://jsonplaceholder.typicode.com/users"
+
+        cevap = requests.get(api_url, timeout=15)
+        cevap.raise_for_status()
+
+        veriler = cevap.json()
+
+        return jsonify(veriler)
+
+    except requests.RequestException:
+        return jsonify({"hata": "API baglanti hatasi"}), 502
+
+
+("/kaydet")
 def kaydet():
     try:
         cevap = requests.get(
